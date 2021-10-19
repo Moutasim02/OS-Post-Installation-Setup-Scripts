@@ -47,6 +47,9 @@ if %ERRORLEVEL% EQU 0 Echo Terminal installed successfully.   %ERRORLEVEL%
 REM Nvidia GeForce Experience
 winget install -e --id Nvidia.GeForceExperience
 if %ERRORLEVEL% EQU 0 Echo Terminal installed successfully.   %ERRORLEVEL%
+REM Winrar
+winget install -e --id RARLab.WinRAR
+if %ERRORLEVEL% EQU 0 Echo Terminal installed successfully.   %ERRORLEVEL%
 
 REM Msi proprietary apps and drivers
 REM MSI Driver & App Center
