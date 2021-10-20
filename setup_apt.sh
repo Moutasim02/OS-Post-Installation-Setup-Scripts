@@ -29,7 +29,7 @@ else
 	         17 "Arc Icons" off
 	         18 "Numix Icons" off
 		 19 "Multiload Indicator" off
-		 20 "Pensor" off
+		 20 "OBS studio" off
 		 21 "Netspeed Indicator" off
 		 22 "Intellij Idea - Community" On
 		 23 "Vscode" on
@@ -189,7 +189,12 @@ else
 				apt install indicator-multiload -y
 				;;
 			20)
-				apt install psensor -y
+				echo "Installing Obs Studio" 
+				apt install ffmpeg -y
+				 apt install v4l2loopback-dkms -y
+				 add-apt-repository ppa:obsproject/obs-studio -y
+				 apt update -y
+				 apt install obs-studio -y
 				;;
 			21)
 				echo "Installing NetSpeed Indicator"
