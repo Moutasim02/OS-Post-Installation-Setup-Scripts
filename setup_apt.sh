@@ -13,31 +13,31 @@ else
 	options=(1 "Sublime Text 3" off    # any option can be set to default to "on"
 	         2 "LAMP Stack" off
 	         3 "Build Essentials" off
-	         4 "Node.js" off
-	         5 "Git" off
-	         6 "Composer" off
+	         4 "Brave" on
+	         5 "Git" on
+	         6 "Figma (with snapd)" on
 	         7 "JDK 8" off
 	         8 "Bleachbit" off
 	         9 "Ubuntu Restricted Extras" off
 	         10 "VLC Media Player" off
 	         11 "Unity Tewak Tool" off
 	         12 "Google Chrome" off
-	         13 "Teamiewer" off
-	         14 "Skype" off
+	         13 "TeamViewer" off
+	         14 "Github Desktop" on
 	         15 "Paper GTK Theme" off
 	         16 "Arch Theme" off
 	         17 "Arc Icons" off
 	         18 "Numix Icons" off
-			 19 "Multiload Indicator" off
-			 20 "Pensor" off
-			 21 "Netspeed Indicator" off
-			 22 "Generate SSH Keys" off
-			 23 "Ruby" off
-			 24 "Sass" off
-			 25 "Vnstat" off
-			 26 "Webpack" off
-			 27 "Grunt" off
-			 28 "Gulp" off)
+		 19 "Multiload Indicator" off
+		 20 "Pensor" off
+		 21 "Netspeed Indicator" off
+		 22 "Intellij Idea - Community" On
+		 23 "Vscode" on
+		 24 "Vim" on
+		 25 "Vnstat" off
+		 26 "Steam" on
+		 27 "Gnome Tweaks" on
+		 28 "Konsole" off)
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
 		for choice in $choices
@@ -55,14 +55,14 @@ else
 			    	#Install LAMP stack
 				echo "Installing Apache"
 				apt install apache2 -y
-	            
-    			echo "Installing Mysql Server"
-	 			apt install mysql-server -y
+		            
+	    			echo "Installing Mysql Server"
+		 		apt install mysql-server -y
 
-        		echo "Installing PHP"
+	        		echo "Installing PHP"
 				apt install php libapache2-mod-php php-mcrypt php-mysql -y
-	            
-        		echo "Installing Phpmyadmin"
+		            
+	        		echo "Installing Phpmyadmin"
 				apt install phpmyadmin -y
 
 				echo "Cofiguring apache to run Phpmyadmin"
@@ -80,41 +80,33 @@ else
 				;;
 				
 			4)
-				#Install Nodejs
-				echo "Installing Nodejs"
-				curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-				apt install -y nodejs
+				#Install Brave
+				echo "Installing Brave"
+				sudo apt install apt-transport-https curl
+
+				sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+
+				echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
+				sudo apt update
+
+				sudo apt install brave-browser -y
 				;;
 
 			5)
 				#Install git
-				echo "Installing Git, please congiure git later..."
+				echo "Installing Git, please configure git later..."
 				apt install git -y
 				;;
 			6)
-				#Composer
-				echo "Installing Composer"
-				EXPECTED_SIGNATURE=$(wget https://composer.github.io/installer.sig -O - -q)
-				php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-				ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
-
-				if [ "$EXPECTED_SIGNATURE" = "$ACTUAL_SIGNATURE" ]
-				  then
-				php composer-setup.php --quiet --install-dir=/bin --filename=composer
-				RESULT=$?
-				rm composer-setup.php
-				else
-				  >&2 echo 'ERROR: Invalid installer signature'
-				  rm composer-setup.php
-				fi
+				#Figma with snapd
+				apt install snapd -y
+				snap install figma-linux
 				;;
 			7)
 				#JDK 8
 				echo "Installing JDK 8"
-				apt install python-software-properties -y
-				add-apt-repository ppa:webupd8team/java -y
-				apt update
-				apt install oracle-java8-installer -y
+				apt install openjdk-8-jdk -y
 				;;
 			8)
 				#Bleachbit
@@ -155,13 +147,11 @@ else
 				;;
 			14)
 
-				#Skype for Linux
-				echo "Installing Skype For Linux"
-				apt install apt-transport-https -y
-				curl https://repo.skype.com/data/SKYPE-GPG-KEY | apt-key add -
-				echo "deb https://repo.skype.com/deb stable main" | tee /etc/apt/sources.list.d/skypeforlinux.list
-				apt update 
-				apt install skypeforlinux -y
+				#Github Desktop
+				echo "Installing Github Desktop"
+				sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.6.3-linux1/GitHubDesktop-linux-2.6.3-linux1.deb
+				sudo apt-get install gdebi-core
+				sudo gdebi ~/GitHubDesktop-linux-2.6.3-linux1.deb
 				;;
 			15)
 
@@ -208,33 +198,41 @@ else
 				apt install indicator-netspeed-unity -y
 				;;
 			22)
-				echo "Generating SSH keys"
-				ssh-keygen -t rsa -b 4096
+				echo "Installing IntelliJ Idea"
+				wget https://download.jetbrains.com/idea/ideaIC-2021.2.3.tar.gz
+				tar xzvf ideaIC-2021.2.3.tar.gz
+				echo "Done downloading and unzipping the IntelliJ Idea please launch it from bin folder"
 				;;
 			23)
-				echo "Installing Ruby"
-				apt install ruby-full -y
+				echo "Installing VsCode"
+				wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+				sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+				sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+				rm -f packages.microsoft.gpg
+				sudo apt install apt-transport-https -y
+				sudo apt update
+				sudo apt install code -y
 				;;
 
 			24)
-				echo "Installing Sass"
-				gem install sass
+				echo "Installing vim"
+				apt install vim -y
 				;;
 			25)
 				echo "Installing Vnstat"
 				apt install vnstat -y
 				;;
 			26)
-				echo "Installing Webpack"
-				npm install webpack -g
+				echo "Installing Steam"
+				apt install steam-installer -y
 				;;
 			27)
-				echo "Installing Grunt"
-				npm install grunt -g
+				echo "Installing Gnome-tweaks"
+				apt install gnome-tweaks -y
 				;;
 			28)
-				echo "Installing Gulp"
-				npm install gulp -g
+				echo "Installing konsole"
+				apt install konsole -y
 				;;
 	    esac
 	done
