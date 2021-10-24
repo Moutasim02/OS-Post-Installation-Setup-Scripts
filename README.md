@@ -1,4 +1,4 @@
-# Application-software-setup
+# Operating Systems Setup Scripts
 
 In this repo, I add my required application software that I use often in my main machine for automated setup using (.bat) for windows and (.sh) file script for linux-based OSs.
 
