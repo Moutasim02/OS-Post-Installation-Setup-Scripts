@@ -11,39 +11,39 @@ else
 	sudo apt-get install dialog
 	cmd=(dialog --separate-output --checklist "Please Select Software you want to install:" 22 76 16)
 	options=(1 "Sublime Text 3" off    # any option can be set to default to "on"
-	         2 "LAMP Stack" off
-	         3 "Build Essentials" off
-	         4 "Brave" on
-	         5 "Git" on
-	         6 "Figma (with snapd)" on
-	         7 "JDK 8" off
-	         8 "Bleachbit" off
-	         9 "Ubuntu Restricted Extras" off
-	         10 "VLC Media Player" off
-	         11 "Unity Tewak Tool" off
-	         12 "Google Chrome" off
-	         13 "TeamViewer" off
-	         14 "Github Desktop" on
-	         15 "Paper GTK Theme" off
-	         16 "Arch Theme" off
-	         17 "Arc Icons" off
-	         18 "Numix Icons" off
-		 19 "Multiload Indicator" off
-		 20 "OBS studio" off
-		 21 "Netspeed Indicator" off
-		 22 "Intellij Idea - Community" On
-		 23 "Vscode" on
-		 24 "Vim" on
-		 25 "Vnstat" off
-		 26 "Steam" on
-		 27 "Gnome Tweaks" on
-		 28 "Konsole" off)
+			2 "LAMP Stack" off
+			3 "Build Essentials" off
+			4 "Brave" on
+			5 "Git" on
+			6 "Figma (with snapd)" on
+			7 "JDK 8" off
+			8 "Bleachbit" off
+			9 "Ubuntu Restricted Extras" off
+			10 "VLC Media Player" off
+			11 "Unity Tewak Tool" off
+			12 "Google Chrome" off
+			13 "TeamViewer" off
+			14 "Github Desktop" on
+			15 "Paper GTK Theme" off
+			16 "Arch Theme" off
+			17 "Arc Icons" off
+			18 "Numix Icons" off
+			19 "Multiload Indicator" off
+			20 "OBS studio" off
+			21 "Netspeed Indicator" off
+			22 "Intellij Idea - Community" On
+			23 "Vscode" on
+			24 "Vim" on
+			25 "Vnstat" off
+			26 "Steam" on
+			27 "Gnome Tweaks" on
+			28 "Konsole" off)
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
 		for choice in $choices
 		do
 		    case $choice in
-	        	1)
+			1)
 	            		#Install Sublime Text 3*
 				echo "Installing Sublime Text"
 				add-apt-repository ppa:webupd8team/sublime-text-3 -y
