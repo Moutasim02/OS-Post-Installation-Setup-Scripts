@@ -10,49 +10,44 @@ else
 
 	sudo apt-get install dialog
 	cmd=(dialog --separate-output --checklist "Please Select Software you want to install:" 22 76 16)
-	options=(1 "Sublime Text 3" off    # any option can be set to default to "on"
+	options=(1 "Sublime Text" on    # any option can be set to default to "on"
 			2 "LAMP Stack" off
-			3 "Build Essentials" off
+			3 "GIMP (with snapd)" off
 			4 "Brave" on
 			5 "Git" on
 			6 "Figma (with snapd)" on
-			7 "JDK 8" off
-			8 "Bleachbit" off
-			9 "Ubuntu Restricted Extras" off
+			7 "Microsoft Teams" off
+			8 "Flatpak" on
+			9 "Notion" off
 			10 "VLC Media Player" off
-			11 "Unity Tewak Tool" off
+			11 "Franz (flatpak needed)" on
 			12 "Google Chrome" off
-			13 "TeamViewer" off
-			14 "Github Desktop" on
-			15 "Paper GTK Theme" off
-			16 "Arch Theme" off
-			17 "Arc Icons" off
-			18 "Numix Icons" off
-			19 "Multiload Indicator" off
-			20 "OBS studio" off
-			21 "Netspeed Indicator" off
-			22 "Intellij Idea - Community" On
-			23 "Vscode" on
-			24 "Vim" on
-			25 "Vnstat" off
-			26 "Steam" on
-			27 "Gnome Tweaks" on
-			28 "Konsole" off)
+			13 "Github Desktop" on
+			14 "OBS studio" off
+			15 "Intellij Idea - Community" On
+			16 "Vscode" on
+			17 "Vim" on
+			18 "Steam" on
+			19 "Gnome Tweaks" off
+			)
 		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
 		for choice in $choices
 		do
 		    case $choice in
 			1)
-	            		#Install Sublime Text 3*
+	            #Install Sublime Text 3*
 				echo "Installing Sublime Text"
-				add-apt-repository ppa:webupd8team/sublime-text-3 -y
-				apt update
-				apt install sublime-text-installer -y
+				apt install wget
+				wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+				sudo apt-get install apt-transport-https -y
+				echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+				sudo apt-get update
+				sudo apt-get install sublime-text -y
 				;;
 
 			2)
-			    	#Install LAMP stack
+			    #Install LAMP stack
 				echo "Installing Apache"
 				apt install apache2 -y
 		            
@@ -74,22 +69,19 @@ else
 				service apache2 restart
 				;;
     		3)	
-				#Install Build Essentials
-				echo "Installing Build Essentials"
-				apt install -y build-essential
+				#Install GIMP
+				echo "Installing GIMP"
+				apt install snapd -y
+				snap install gimp
 				;;
 				
 			4)
 				#Install Brave
 				echo "Installing Brave"
-				sudo apt install apt-transport-https curl
-
+				apt install apt-transport-https curl -y
 				sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-
 				echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-
-				sudo apt update
-
+				sudo apt update -y
 				sudo apt install brave-browser -y
 				;;
 
@@ -98,38 +90,50 @@ else
 				echo "Installing Git, please configure git later..."
 				apt install git -y
 				;;
+
 			6)
 				#Figma with snapd
+				echo "Installing Figma"
 				apt install snapd -y
 				snap install figma-linux
 				;;
+
 			7)
-				#JDK 8
-				echo "Installing JDK 8"
-				apt install openjdk-8-jdk -y
+				#Microsoft Teams 
+				echo "Installing Microsoft Teams"
+				curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+				sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/ms-teams stable main" > /etc/apt/sources.list.d/teams.list'
+				sudo apt update
+				sudo apt install teams
 				;;
+
 			8)
-				#Bleachbit
-				echo "Installing BleachBit"
-				apt install bleachbit -y
+				#Flatpak
+				echo "Installing Flatpak"
+				apt install flatpak -y
+				flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 				;;
+
 			9)
-				#Ubuntu Restricted Extras
-				echo "Installing Ubuntu Restricted Extras"
-				apt install ubunt-restricted-extras -y
+				#Notion
+				echo "Installing Notion"
+				echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
+				sudo apt update
+				sudo apt install notion-app-enhanced
 				;;
+
 			10)
 				#VLC Media Player
 				echo "Installing VLC Media Player"
 				apt install vlc -y
 				;;
+
 			11)
-				#Unity tweak tool
-				echo "Installing Unity Tweak Tool"
-				apt install unity-tweak-tool -y
+				#Franz (All in one social media)
+				echo "Installing Franz (All in one social media)"
+				sudo flatpak install flathub com.meetfranz.Franz
 				;;
 			12)
-
 				#Chrome
 				echo "Installing Google Chrome"
 				wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -137,58 +141,17 @@ else
 				apt-get update 
 				apt-get install google-chrome-stable -y
 				;;
-			13)
-				#Teamviewer
-				echo "Installing Teamviewer"
-				wget http://download.teamviewer.com/download/teamviewer_i386.deb
-				dpkg -i teamviewer_i386.deb
-				apt-get install -f -y
-				rm -rf teamviewer_i386.deb
-				;;
-			14)
 
+			13)
 				#Github Desktop
 				echo "Installing Github Desktop"
 				sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.6.3-linux1/GitHubDesktop-linux-2.6.3-linux1.deb
 				sudo apt-get install gdebi-core
 				sudo gdebi ~/GitHubDesktop-linux-2.6.3-linux1.deb
 				;;
-			15)
 
-				#Paper GTK Theme
-				echo "Installing Paper GTK Theme"
-				add-apt-repository ppa:snwh/pulp -y
-				apt-get update
-				apt-get install paper-gtk-theme -y
-				apt-get install paper-icon-theme -y
-				;;
-			16)
-				#Arc Theme
-				echo "Installing Arc Theme"
-				add-apt-repository ppa:noobslab/themes -y
-				apt-get update
-				apt-get install arc-theme -y
-				;;
-			17)
-
-				#Arc Icons
-				echo "Installing Arc Icons"
-				add-apt-repository ppa:noobslab/icons -y
-				apt-get update
-				apt-get install arc-icons -y
-				;;
-			18)
-				#Numix Icons
-				echo "Installing Numic Icons"
-				apt-add-repository ppa:numix/ppa -y
-				apt-get update
-				apt-get install numix-icon-theme numix-icon-theme-circle -y
-				;;
-			19)	
-				echo "Installing Multiload Indicator"
-				apt install indicator-multiload -y
-				;;
-			20)
+			14)
+				# OBS Studio
 				echo "Installing Obs Studio" 
 				apt install ffmpeg -y
 				 apt install v4l2loopback-dkms -y
@@ -196,19 +159,17 @@ else
 				 apt update -y
 				 apt install obs-studio -y
 				;;
-			21)
-				echo "Installing NetSpeed Indicator"
-				apt-add-repository ppa:fixnix/netspeed -y
-				apt-get update
-				apt install indicator-netspeed-unity -y
-				;;
-			22)
+		
+			15)
+				# IntelliJ Idea
 				echo "Installing IntelliJ Idea"
 				wget https://download.jetbrains.com/idea/ideaIC-2021.2.3.tar.gz
 				tar xzvf ideaIC-2021.2.3.tar.gz
 				echo "Done downloading and unzipping the IntelliJ Idea please launch it from bin folder"
 				;;
-			23)
+
+			16)
+				# VsCode
 				echo "Installing VsCode"
 				wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 				sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
@@ -219,26 +180,24 @@ else
 				sudo apt install code -y
 				;;
 
-			24)
+			17)
+			 	# vim
 				echo "Installing vim"
 				apt install vim -y
 				;;
-			25)
-				echo "Installing Vnstat"
-				apt install vnstat -y
-				;;
-			26)
+
+			18)
+				# Steam
 				echo "Installing Steam"
 				apt install steam-installer -y
 				;;
-			27)
+
+			19)
+				# Gnome Tweaks
 				echo "Installing Gnome-tweaks"
 				apt install gnome-tweaks -y
 				;;
-			28)
-				echo "Installing konsole"
-				apt install konsole -y
-				;;
+
 	    esac
 	done
 fi
