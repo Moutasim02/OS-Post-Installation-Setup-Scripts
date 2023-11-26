@@ -227,6 +227,18 @@ add_ssh_key() {
 	ssh-add ~/.ssh/id_ed25519
 }
 
+install_vscode() {
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >packages.microsoft.gpg
+	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+	sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+	rm -f packages.microsoft.gpg
+
+	echo "Retrieve VS Code Package"
+	sudo apt install -y apt-transport-https
+	sudo apt update -y
+	sudo apt install -y code
+}
+
 main() {
 	grant_execution_permission
 	bash mount_directories.sh
@@ -240,6 +252,7 @@ main() {
 	install_mern
 	install_docker
 	install_jetbrains_toolbox
+	install_vscode
 	create_pwas
 	echo "Post-installation script completed."
 }

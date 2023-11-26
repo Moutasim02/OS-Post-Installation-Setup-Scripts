@@ -3,6 +3,7 @@ vim
 wget
 curl
 gnupg
+gpg
 libfuse2
 flatpak
 gnome-software-plugin-flatpak

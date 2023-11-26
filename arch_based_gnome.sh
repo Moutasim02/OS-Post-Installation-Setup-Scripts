@@ -160,9 +160,14 @@ grant_execution_permission() {
     chmod +x mount_directories.sh
 }
 
+add_ssh_key() {
+	ssh-add ~/.ssh/id_ed25519
+}
+
 main() {
     grant_execution_permission
     bash mount_directories.sh
+    add_ssh_key
     install_packages
     enable_flathub
     install_flatpak_packages

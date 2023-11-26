@@ -24,30 +24,28 @@ install_flatpak_from_list() {
     fi
 }
 
-
 install_gnome_extensions() {
-	if [ ! -f "$1" ]; then
-		echo "Error: Extensions list file not found: $1"
-		exit 1
-	fi
+    if [ ! -f "$1" ]; then
+        echo "Error: Extensions list file not found: $1"
+        exit 1
+    fi
 
-	while IFS= read -r URL; do
-		EXTENSION_ID=$(curl -s "$URL" | grep -oP 'data-uuid="\K[^"]+')
-		VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=$EXTENSION_ID" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
-		wget -O "${EXTENSION_ID}.zip" "https://extensions.gnome.org/download-extension/${EXTENSION_ID}.shell-extension.zip?version_tag=$VERSION_TAG"
-		gnome-extensions install --force "${EXTENSION_ID}.zip"
-		if ! gnome-extensions list | grep --quiet "${EXTENSION_ID}"; then
-			busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${EXTENSION_ID}"
-		fi
-		gnome-extensions enable "${EXTENSION_ID}"
-		rm "${EXTENSION_ID}.zip"
-	done <"$1"
+    while IFS= read -r URL; do
+        EXTENSION_ID=$(curl -s "$URL" | grep -oP 'data-uuid="\K[^"]+')
+        VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=$EXTENSION_ID" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
+        wget -O "${EXTENSION_ID}.zip" "https://extensions.gnome.org/download-extension/${EXTENSION_ID}.shell-extension.zip?version_tag=$VERSION_TAG"
+        gnome-extensions install --force "${EXTENSION_ID}.zip"
+        if ! gnome-extensions list | grep --quiet "${EXTENSION_ID}"; then
+            busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${EXTENSION_ID}"
+        fi
+        gnome-extensions enable "${EXTENSION_ID}"
+        rm "${EXTENSION_ID}.zip"
+    done <"$1"
 }
-
 
 export_installed_extensions() {
     echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
-    gnome-extensions list > "$INSTALLED_EXTENSIONS_FILE"
+    gnome-extensions list >"$INSTALLED_EXTENSIONS_FILE"
 }
 
 enable_installed_extensions() {
@@ -180,9 +178,22 @@ grant_execution_permission() {
     chmod +x mount_directories.sh
 }
 
+install_vscode() {
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+
+    dnf check-update
+    sudo dnf install code --assumeyes
+}
+
+add_ssh_key() {
+	ssh-add ~/.ssh/id_ed25519
+}
+
 main() {
     grant_execution_permission
     bash mount_directories.sh
+    add_ssh_key
     install_packages
     enable_flathub
     install_flatpak_packages
@@ -190,6 +201,7 @@ main() {
     install_brave
     install_mern
     install_docker
+    install_vscode
     create_pwas
     echo "Post-installation script completed."
 }
