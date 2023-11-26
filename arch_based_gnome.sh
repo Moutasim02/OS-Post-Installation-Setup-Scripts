@@ -111,29 +111,6 @@ install_brave() {
     sudo pacman -S --needed --noconfirm brave
 }
 
-config_power_management() {
-    echo "Stop Automatic Suspend"
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
-
-    echo "Stop Screen Dimming"
-    gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
-
-    echo "Prevent Screen from Blanking"
-    gsettings set org.gnome.desktop.session idle-delay 0
-}
-
-add_arabic_layout() {
-    echo "Adding Arabic layout"
-    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara')]"
-    echo "Arabic keyboard layout added."
-}
-
-configure_system() {
-    config_power_management
-    add_arabic_layout
-}
-
 create_a_pwa() {
     local name="$1"
     local url="$2"
@@ -170,7 +147,7 @@ enable_flathub() {
 }
 
 grant_execution_permission() {
-    sudo chmod +x mount_directories.sh
+    chmod +x mount_directories.sh
 }
 
 main() {

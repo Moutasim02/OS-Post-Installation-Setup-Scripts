@@ -6,11 +6,8 @@ EXTENSIONS_LIST_FILE="extension_lists/extensions_list.txt"
 INSTALLED_EXTENSIONS_FILE="installed_extensions.txt"
 
 install_packages() {
-    echo "Updating package list..."
-    sudo dnf update -y
-
     echo "Installing dnf packages..."
-    install_from_list "$PACKAGE_LIST"
+    sudo dnf install -y $(<"$PACKAGE_LIST")
 }
 
 install_flatpak_packages() {
@@ -21,19 +18,9 @@ install_flatpak_packages() {
 install_flatpak_from_list() {
     local flatpak_file="$1"
     if [ -f "$flatpak_file" ]; then
-        flatpak install flathub --noninteractive $(<"$flatpak_file")
+        flatpak install --noninteractive flathub $(<"$flatpak_file")
     else
         echo "Flatpak Package list file not found: $flatpak_file"
-    fi
-}
-
-install_from_list() {
-    local list_file="$1"
-
-    if [ -f "$list_file" ]; then
-        sudo dnf install -y $(<"$list_file")
-    else
-        echo "DNF Package list file not found: $list_file"
     fi
 }
 
@@ -42,9 +29,9 @@ install_gnome_extensions() {
     if [ -f "$extensions_file" ]; then
         echo "Installing GNOME Shell extensions from $extensions_file..."
         gnome-extensions install $(<"$extensions_file")
-    else
+    else {
         echo "Extensions list file not found: $extensions_file"
-    fi
+    }
 }
 
 export_installed_extensions() {
@@ -76,7 +63,7 @@ install_bash_theme() {
     echo "Running the Synth-Shell installer..."
     ./setup.sh
 
-    echo "Going back to the previous directory"
+    echo "Going back to previous directory"
     cd ..
 }
 
@@ -122,8 +109,7 @@ install_nvm() {
 
 install_mern() {
     install_nvm
-    echo "Installing node"
-    nvm install 20.8.0
+    echo "To install node run: nvm install 20.8.0"
 
     echo "Installing MongoDB..."
     sudo dnf install -y mongodb
@@ -180,7 +166,7 @@ enable_flathub() {
 }
 
 grant_execution_permission() {
-	sudo chmod +x mount_directories.sh
+    chmod +x mount_directories.sh
 }
 
 main() {

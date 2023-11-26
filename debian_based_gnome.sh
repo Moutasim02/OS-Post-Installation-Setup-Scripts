@@ -14,52 +14,52 @@ install_packages() {
 }
 
 install_flatpak_packages() {
-        echo "Installing flatpak packages..."
-        install_flatpak_from_list "$FLATPAK_PACKAGE_LIST"
+	echo "Installing flatpak packages..."
+	install_flatpak_from_list "$FLATPAK_PACKAGE_LIST"
 }
 
 install_flatpak_from_list() {
 	local flatpak_file="$1"
 	if [ -f "$flatpak_file" ]; then
-	        flatpak install flathub --noninteractive $(<"$flatpak_file")
+		flatpak install flathub --noninteractive $(<"$flatpak_file")
 	else
-	        echo "Flatpak Package list file not found: $flatpak_file"
-        fi
+		echo "Flatpak Package list file not found: $flatpak_file"
+	fi
 }
 
 install_from_list() {
 	local list_file="$1"
 	if [ -f "$list_file" ]; then
-	sudo apt install -y $(<"$list_file")
+		sudo apt install -y $(<"$list_file")
 	else
-	echo "APT Package list file not found: $list_file"
+		echo "APT Package list file not found: $list_file"
 	fi
 }
 
 install_gnome_extensions() {
-    local extensions=(
-        "Always-Show-Titles-In-Overview@gmail.com"
-        "appindicatorsupport@rgcjonas.gmail.com"
-        "blur-my-shell@aunetx"
-        "gsconnect@andyholmes.github.io"
-        "dash-to-dock@micxgx.gmail.com"
-        "user-theme@gnome-shell-extensions.gcampax.github.com"
-    )
+	local extensions=(
+		"Always-Show-Titles-In-Overview@gmail.com"
+		"appindicatorsupport@rgcjonas.gmail.com"
+		"blur-my-shell@aunetx"
+		"gsconnect@andyholmes.github.io"
+		"dash-to-dock@micxgx.gmail.com"
+		"user-theme@gnome-shell-extensions.gcampax.github.com"
+	)
 
-    echo "Installing GNOME Shell extensions..."
-    for extension_id in "${extensions[@]}"; do
-        gnome-extensions install "$extension_id"
-    done
+	echo "Installing GNOME Shell extensions..."
+	for extension_id in "${extensions[@]}"; do
+		gnome-extensions install "$extension_id"
+	done
 }
 
 export_installed_extensions() {
-    echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
-    gnome-extensions list > "$INSTALLED_EXTENSIONS_FILE"
+	echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
+	gnome-extensions list > installed_extensions.txt
 }
 
 enable_installed_extensions() {
-    echo "Enabling installed GNOME Shell extensions..."
-    gnome-extensions enable $(awk '{print $1}' "$INSTALLED_EXTENSIONS_FILE")
+	echo "Enabling installed GNOME Shell extensions..."
+	gnome-extensions enable $(awk '{print $1}' "$INSTALLED_EXTENSIONS_FILE")
 }
 
 install_bash_theme() {
@@ -106,9 +106,9 @@ install_mern() {
 	echo "To install node run: nvm install 20.8.0"
 
 	echo "Installing MongoDB..."
-    	curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
-   	sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-   	--dearmor
+	curl -fsSL https://pgp.mongodb.com/server-7.0.asc |
+		sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+			--dearmor
 	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
 	sudo apt-get update
 	sudo apt-get install -y mongodb-org mongodb-org-database mongodb-org-tools mongodb-org-tools
@@ -128,19 +128,19 @@ install_docker() {
 
 	echo "Adding the repository to Apt sources"
 	echo \
-	  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-	  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-	  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+		"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+	  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+		sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 	sudo apt-get update
 
-	echo  "Installing required packages"
+	echo "Installing required packages"
 	sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 }
 
 install_brave() {
 	sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-	echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+	echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 	sudo apt update -y
 	sudo apt install -y brave-browser
 }
@@ -164,7 +164,7 @@ add_arabic_layout() {
 }
 
 configure_system() {
-    	echo "Configuring system..."
+	echo "Configuring system..."
 	configure_gnome
 	config_power_management
 	add_arabic_layout
@@ -188,26 +188,26 @@ EOL
 }
 
 install_jetbrains_toolbox() {
-        wget -c https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.1.1.18388.tar.gz
-        sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C ~/Downloads
+	wget -c https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.1.1.18388.tar.gz
+	sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C ~/Downloads
 }
 
 create_pwas() {
 	echo "Creating PWAs for specified websites"
 	create_a_pwa "X" "https://x.com"
 	create_a_pwa "Teams" "https://teams.microsoft.com"
-        create_a_pwa "Tldraw" "https://www.tldraw.com"
-        create_a_pwa "Whatsapp Web" "https://web.whatsapp.com"
-        create_a_pwa "Notion" "https://www.notion.so"
-        create_a_pwa "Outlook" "https://outlook.office.com/mail"
-        create_a_pwa "ChatGPT" "https://chat.openai.com"
-        create_a_pwa "Bard" "https://bard.google.com/chat"
+	create_a_pwa "Tldraw" "https://www.tldraw.com"
+	create_a_pwa "Whatsapp Web" "https://web.whatsapp.com"
+	create_a_pwa "Notion" "https://www.notion.so"
+	create_a_pwa "Outlook" "https://outlook.office.com/mail"
+	create_a_pwa "ChatGPT" "https://chat.openai.com"
+	create_a_pwa "Bard" "https://bard.google.com/chat"
 	create_a_pwa "Figma" "https://www.figma.com"
 }
 
 enable_flathub() {
-        echo "Installing flathub"
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+	echo "Installing flathub"
+	flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
 grant_execution_permission() {
@@ -216,7 +216,7 @@ grant_execution_permission() {
 
 install_virtualbox() {
 	echo "Installing Virtual Box"
-	curl https://download.virtualbox.org/virtualbox/7.0.12/virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
+	wget -c https://download.virtualbox.org/virtualbox/7.0.12/virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 	sudo apt install virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 }
 
@@ -225,16 +225,15 @@ main() {
 	bash mount_directories.sh
 	install_packages
 	enable_flathub
-        install_flatpak_packages
+	install_flatpak_packages
 	configure_system
 	install_virtualbox
-        install_brave
-        install_mern
-        install_docker
-        install_jetbrains_toolbox
+	install_brave
+	install_mern
+	install_docker
+	install_jetbrains_toolbox
 	create_pwas
 	echo "Post-installation script completed."
 }
 
 main
-
