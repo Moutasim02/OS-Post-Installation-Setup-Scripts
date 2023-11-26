@@ -8,7 +8,9 @@ MOUNT_DEST="/home/$USERNAME"
 
 sudo mkdir -p "$MOUNT_SOURCE"
 
-echo "UUID=$PARTITION_UUID $MOUNT_SOURCE ext4 defaults 0 2" | sudo tee -a /etc/fstab
+if ! grep -q "UUID=$PARTITION_UUID $MOUNT_SOURCE" /etc/fstab; then
+    echo "UUID=$PARTITION_UUID $MOUNT_SOURCE ext4 defaults 0 2" | sudo tee -a /etc/fstab
+fi
 
 sudo mount -a
 

@@ -104,22 +104,22 @@ install_nvm() {
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 }
 
-install_mern() {
-	install_nvm
-	echo "To install node run: nvm install 20.8.0"
+# install_mern() {
+# 	install_nvm
+# 	echo "To install node run: nvm install 20.8.0"
 
-	echo "Installing MongoDB..."
-	curl -fsSL https://pgp.mongodb.com/server-7.0.asc |
-		sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-			--dearmor
-	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-	sudo apt-get update
-	sudo apt-get install -y mongodb-org mongodb-org-database mongodb-org-tools mongodb-org-tools
-	echo "Start mongod"
-	sudo systemctl start mongod
-	echo "MongoDB Status:"
-	sudo systemctl status mongod
-}
+# 	echo "Installing MongoDB..."
+# 	curl -fsSL https://pgp.mongodb.com/server-7.0.asc |
+# 		sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+# 			--dearmor
+# 	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+# 	sudo apt-get update
+# 	sudo apt-get install -y mongodb-org mongodb-org-database mongodb-org-tools mongodb-org-tools
+# 	echo "Start mongod"
+# 	sudo systemctl start mongod
+# 	echo "MongoDB Status:"
+# 	sudo systemctl status mongod
+# }
 
 install_docker() {
 	echo "Adding Docker's official GPG key"
@@ -173,23 +173,6 @@ configure_system() {
 	add_arabic_layout
 }
 
-create_a_pwa() {
-	local name="$1"
-	local url="$2"
-	local desktop_file="$HOME/Desktop/$name.desktop"
-
-	cat <<EOL >"$desktop_file"
-[Desktop Entry]
-Name=$name
-Exec=xdg-open $url
-Type=Application
-Icon=web-browser
-EOL
-
-	chmod +x "$desktop_file"
-	echo "Desktop file created for $name at $desktop_file"
-}
-
 install_jetbrains_toolbox() {
 	wget -c https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.1.1.18388.tar.gz
 	sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C ~/Downloads
@@ -226,9 +209,18 @@ install_vscode() {
 	sudo apt install -y code
 }
 
+mount_process() {
+	bash mount_directories.sh
+	sudo cp mount_directories.sh /usr/local/bin/
+	sudo chmod +x /usr/local/bin/mount_directories.sh
+	sudo cp bind-mounts.service /etc/systemd/system/bind-mounts.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable bind-mounts.service
+}
+
 main() {
 	grant_execution_permission
-	bash mount_directories.sh
+	mount_process
 	add_ssh_key
 	install_packages
 	enable_flathub
@@ -236,7 +228,7 @@ main() {
 	configure_system
 	install_virtualbox
 	install_brave
-	install_mern
+	# install_mern
 	install_docker
 	install_jetbrains_toolbox
 	install_vscode

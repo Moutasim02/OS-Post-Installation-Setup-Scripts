@@ -1,0 +1,10 @@
+[Unit]
+Description=Bind Mounts Setup
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/mount_directories.sh
+
+[Install]
+WantedBy=multi-user.target
