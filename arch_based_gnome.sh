@@ -24,14 +24,24 @@ install_flatpak_from_list() {
     fi
 }
 
+
 install_gnome_extensions() {
-    local extensions_file="$1"
-    if [ -f "$extensions_file" ]; then
-        echo "Installing GNOME Shell extensions from $extensions_file..."
-        gnome-extensions install $(<"$extensions_file")
-    else
-        echo "Extensions list file not found: $extensions_file"
-    fi
+	if [ ! -f "$1" ]; then
+		echo "Error: Extensions list file not found: $1"
+		exit 1
+	fi
+
+	while IFS= read -r URL; do
+		EXTENSION_ID=$(curl -s "$URL" | grep -oP 'data-uuid="\K[^"]+')
+		VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=$EXTENSION_ID" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
+		wget -O "${EXTENSION_ID}.zip" "https://extensions.gnome.org/download-extension/${EXTENSION_ID}.shell-extension.zip?version_tag=$VERSION_TAG"
+		gnome-extensions install --force "${EXTENSION_ID}.zip"
+		if ! gnome-extensions list | grep --quiet "${EXTENSION_ID}"; then
+			busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${EXTENSION_ID}"
+		fi
+		gnome-extensions enable "${EXTENSION_ID}"
+		rm "${EXTENSION_ID}.zip"
+	done <"$1"
 }
 
 export_installed_extensions() {
