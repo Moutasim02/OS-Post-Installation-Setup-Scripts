@@ -10,12 +10,12 @@ install_packages() {
 	sudo apt update
 
 	echo "Installing apt packages..."
-	install_from_list "$PACKAGE_LIST" "FLATPAK_PACKAGE_LIST"
+	install_from_list "$PACKAGE_LIST"
 }
 
 install_flatpak_packages() {
         echo "Installing flatpak packages..."
-        install_flatpak_from_list "FLATPAK_PACKAGE_LIST"
+        install_flatpak_from_list "$FLATPAK_PACKAGE_LIST"
 }
 
 install_flatpak_from_list() {
@@ -29,7 +29,6 @@ install_flatpak_from_list() {
 
 install_from_list() {
 	local list_file="$1"
-
 	if [ -f "$list_file" ]; then
 	sudo apt install -y $(<"$list_file")
 	else
@@ -88,7 +87,7 @@ config_workspaces() {
 }
 
 configure_gnome() {
-	install_gnome_extensions "$EXTENSIONS_LIST_FILE"
+	install_gnome_extensions
 	export_installed_extensions
 	enable_installed_extensions
 	install_bash_theme
@@ -100,13 +99,11 @@ install_nvm() {
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-	source ~/.bashrc
 }
 
 install_mern() {
 	install_nvm
-	echo "Installing node"
-	nvm install 20.8.0
+	echo "To install node run: nvm install 20.8.0"
 
 	echo "Installing MongoDB..."
     	curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
@@ -218,9 +215,9 @@ grant_execution_permission() {
 }
 
 install_virtualbox() {
-	wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg
-	sudo apt-get update -y
-	sudo apt-get install -y virtualbox-6.1
+	echo "Installing Virtual Box"
+	curl https://download.virtualbox.org/virtualbox/7.0.12/virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
+	sudo apt install virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 }
 
 main() {
