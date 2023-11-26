@@ -7,7 +7,6 @@ USERNAME="moutasim"
 DIRECTORIES=("Development" "Documents" "Downloads" "Pictures" "VMs" ".ssh")
 
 for dir in "${DIRECTORIES[@]}"; do
-    mkdir -p "/home/$USERNAME/$dir"
     echo "UUID=$PARTITION_UUID /home/$USERNAME/$dir ext4 defaults 0 2" | sudo tee -a /etc/fstab
 done
 
