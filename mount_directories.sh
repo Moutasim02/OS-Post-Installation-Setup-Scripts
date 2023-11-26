@@ -3,23 +3,20 @@
 PARTITION_UUID="uuid_here"
 USERNAME="moutasim"
 
-declare -A DIRECTORY_MAPPING=(
-    ["Development"]="/mnt/development"
-    ["Documents"]="/mnt/documents"
-    ["Downloads"]="/mnt/downloads"
-    ["Pictures"]="/mnt/pictures"
-    ["VMs"]="/mnt/vms"
-    [".ssh"]="/mnt/ssh"
-)
+MOUNT_SOURCE="/mnt/source"
+MOUNT_DEST="/home/$USERNAME"
 
-for mount_point in "${DIRECTORY_MAPPING[@]}"; do
-    sudo mkdir -p "$mount_point"
-done
+sudo mkdir -p "$MOUNT_SOURCE"
 
-for dir in "${!DIRECTORY_MAPPING[@]}"; do
-    echo "UUID=$PARTITION_UUID ${DIRECTORY_MAPPING[$dir]} ext4 defaults 0 2" | sudo tee -a /etc/fstab
-done
+echo "UUID=$PARTITION_UUID $MOUNT_SOURCE ext4 defaults 0 2" | sudo tee -a /etc/fstab
 
 sudo mount -a
+
+sudo mount --bind "$MOUNT_SOURCE/Development" "$MOUNT_DEST/Development"
+sudo mount --bind "$MOUNT_SOURCE/Documents" "$MOUNT_DEST/Documents"
+sudo mount --bind "$MOUNT_SOURCE/Downloads" "$MOUNT_DEST/Downloads"
+sudo mount --bind "$MOUNT_SOURCE/Pictures" "$MOUNT_DEST/Pictures"
+sudo mount --bind "$MOUNT_SOURCE/VMs" "$MOUNT_DEST/VMs"
+sudo mount --bind "$MOUNT_SOURCE/.ssh" "$MOUNT_DEST/.ssh"
 
 echo "Partition mounting script completed."
