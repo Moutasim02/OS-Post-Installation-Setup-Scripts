@@ -105,13 +105,21 @@ install_mern() {
 	nvm install 20.8.0
 
 	echo "Installing MongoDB..."
-    	sudo apt install -y mongodb
+    	curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
+   	sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+   	--dearmor
+	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+	sudo apt-get update
+	sudo apt-get install -y mongodb-org
+	sudo systemctl start mongod
+	echo "MongoDB Status:"
+	sudo systemctl status mongod
 }
 
 install_docker() {
 	echo "Adding Docker's official GPG key"
-	sudo apt-get update
-	sudo apt-get install ca-certificates curl gnupg
+	sudo apt-get update -y
+	sudo apt-get install -y ca-certificates curl gnupg
 	sudo install -m 0755 -d /etc/apt/keyrings
 	curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 	sudo chmod a+r /etc/apt/keyrings/docker.gpg
@@ -124,15 +132,15 @@ install_docker() {
 	sudo apt-get update
 
 	echo  "Installing required packages"
-	sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 }
 
 install_brave() {
 	sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 	echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-	sudo apt update
-	sudo apt install brave-browser
+	sudo apt update -y
+	sudo apt install -y brave-browser
 }
 
 config_power_management() {
@@ -162,8 +170,8 @@ configure_system() {
 
 create_a_pwa() {
 	local name="$1"
-	    local url="$2"
-	    local desktop_file="$HOME/Desktop/$name.desktop"
+	local url="$2"
+	local desktop_file="$HOME/Desktop/$name.desktop"
 
 	cat <<EOL >"$desktop_file"
 [Desktop Entry]
@@ -179,9 +187,7 @@ EOL
 
 install_jetbrains_toolbox() {
         wget -c https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.1.1.18388.tar.gz
-        sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C /opt
-        echo "running jetbrains toolbox"
-        /opt/jetbrains-toolbox-2.1.1.18388/jetbrains-toolbox
+        sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C ~/Downloads
 }
 
 create_pwas() {
