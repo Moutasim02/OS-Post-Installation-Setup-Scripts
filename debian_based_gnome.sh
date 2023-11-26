@@ -37,24 +37,31 @@ install_from_list() {
 }
 
 install_gnome_extensions() {
-	local extensions=(
-		"Always-Show-Titles-In-Overview@gmail.com"
-		"appindicatorsupport@rgcjonas.gmail.com"
-		"blur-my-shell@aunetx"
-		"gsconnect@andyholmes.github.io"
-		"dash-to-dock@micxgx.gmail.com"
-		"user-theme@gnome-shell-extensions.gcampax.github.com"
-	)
+    local extensions_file="$1"
 
-	echo "Installing GNOME Shell extensions..."
-	for extension_id in "${extensions[@]}"; do
-		gnome-extensions install "$extension_id"
-	done
+    if [[ ! -f "$extensions_file" ]]; then
+        echo "Error: Extensions file not found."
+        exit 1
+    fi
+
+    while IFS= read -r extension; do
+        VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${extension}" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
+        wget -O "${extension}.zip" "https://extensions.gnome.org/download-extension/${extension}.shell-extension.zip?version_tag=${VERSION_TAG}"
+        gnome-extensions install --force "${extension}.zip"
+
+        if ! gnome-extensions list | grep --quiet "${extension}"; then
+            busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${extension}"
+        fi
+
+        gnome-extensions enable "${extension}"
+        rm "${extension}.zip"
+    done < "$extensions_file"
 }
+
 
 export_installed_extensions() {
 	echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
-	gnome-extensions list > installed_extensions.txt
+	gnome-extensions list >installed_extensions.txt
 }
 
 enable_installed_extensions() {
@@ -87,7 +94,7 @@ config_workspaces() {
 }
 
 configure_gnome() {
-	install_gnome_extensions
+	install_gnome_extensions "$EXTENSIONS_LIST_FILE"
 	export_installed_extensions
 	enable_installed_extensions
 	install_bash_theme
