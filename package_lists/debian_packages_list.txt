@@ -2,14 +2,12 @@ git
 vim
 wget
 curl
-code
+gnupg
 libfuse2
 flatpak
 gnome-software-plugin-flatpak
 gnome-tweaks
 htop
-wps-office
-virtualbox
 timeshift
 xsel
 

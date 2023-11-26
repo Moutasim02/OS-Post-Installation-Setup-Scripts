@@ -24,7 +24,7 @@ install_flatpak_from_list() {
 	if [-f "$flatpak_file" ]; then
 	        flatpak install flathub --noninteractive $(<"$flatpak_file")
 	else
-        echo "Flatpak Package list file not found: $flatpak_file"
+	        echo "Flatpak Package list file not found: $flatpak_file"
         fi
 }
 
@@ -40,14 +40,17 @@ install_from_list() {
 }
 
 install_gnome_extensions() {
-	local extensions_file="$1"
-	if [ -f "$extensions_file" ]; then
-	echo "Installing GNOME Shell extensions from $extensions_file..."
-	gnome-extensions install $(<"$extensions_file")
-	else
-	echo "Extensions list file not found: $extensions_file"
-	fi
+    local extensions_file="$1"
+    if [ -f "$extensions_file" ]; then
+        echo "Installing GNOME Shell extensions from $extensions_file..."
+        while IFS= read -r extension_id; do
+            gnome-extensions install "$extension_id"
+        done < "$extensions_file"
+    else
+        echo "Extensions list file not found: $extensions_file"
+    fi
 }
+
 
 export_installed_extensions() {
     echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
@@ -93,9 +96,9 @@ configure_gnome() {
 
 install_nvm() {
 	echo "Installing NVM..."
-	curl -o https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 	source ~/.bashrc
 }
 
@@ -110,7 +113,8 @@ install_mern() {
    	--dearmor
 	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
 	sudo apt-get update
-	sudo apt-get install -y mongodb-org
+	sudo apt-get install -y mongodb-org mongodb-org-database mongodb-org-tools mongodb-org-tools
+	echo "Start mongod"
 	sudo systemctl start mongod
 	echo "MongoDB Status:"
 	sudo systemctl status mongod
@@ -212,6 +216,12 @@ grant_execution_permission() {
 	sudo chmod +x mount_directories.sh
 }
 
+install_virtualbox() {
+	wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg
+	sudo apt-get update -y
+	sudo apt-get install -y virtualbox-6.1
+}
+
 main() {
 	grant_execution_permission
 	bash mount_directories.sh
@@ -219,6 +229,7 @@ main() {
 	enable_flathub
         install_flatpak_packages
 	configure_system
+	install_virtualbox
         install_brave
         install_mern
         install_docker
