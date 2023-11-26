@@ -21,6 +21,6 @@ This repository contains post-installation setup scripts for various Linux distr
   - Description: This script is crafted for Fedora-based systems with the GNOME desktop environment. It manages package installation using DNF, installs Flatpak packages, sets up GNOME Shell extensions, configures workspaces, and creates PWAs for specified websites.
 
 ## Notes
-These scripts are provided as-is, and you should review and understand each script before execution because its heavily tailored to my needs. you can for this repo and make your own.
+These scripts are provided as-is, and you should review and understand each script before execution because its heavily tailored to my needs. you can fork this repo and make your own.
 Make sure to backup important data before running any setup scripts.
 Feel free to customize the scripts based on your preferences or specific requirements.
