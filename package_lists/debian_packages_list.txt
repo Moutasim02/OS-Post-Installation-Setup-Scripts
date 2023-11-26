@@ -1,0 +1,15 @@
+git
+vim
+wget
+curl
+code
+libfuse2
+flatpak
+gnome-software-plugin-flatpak
+gnome-tweaks
+htop
+wps-office
+virtualbox
+timeshift
+xsel
+

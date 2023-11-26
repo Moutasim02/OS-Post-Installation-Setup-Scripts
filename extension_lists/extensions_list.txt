@@ -1,0 +1,6 @@
+Always-Show-Titles-In-Overview@gmail.com
+appindicatorsupport@rgcjonas.gmail.com
+blur-my-shell@aunetx
+gsconnect@andyholmes.github.io
+dash-to-dock@micxgx.gmail.com
+user-theme@gnome-shell-extensions.gcampax.github.com

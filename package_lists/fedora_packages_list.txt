@@ -1,0 +1,12 @@
+git
+vim
+wget
+curl
+code
+flatpak
+gnome-tweaks
+htop
+wps-office
+virtualbox
+timeshift
+xsel
