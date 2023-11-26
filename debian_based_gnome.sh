@@ -13,7 +13,6 @@ install_packages() {
 	install_from_list "$PACKAGE_LIST" "FLATPAK_PACKAGE_LIST"
 }
 
-
 install_flatpak_packages() {
         echo "Installing flatpak packages..."
         install_flatpak_from_list "FLATPAK_PACKAGE_LIST"
@@ -21,13 +20,12 @@ install_flatpak_packages() {
 
 install_flatpak_from_list() {
 	local flatpak_file="$1"
-	if [-f "$flatpak_file" ]; then
+	if [ -f "$flatpak_file" ]; then
 	        flatpak install flathub --noninteractive $(<"$flatpak_file")
 	else
 	        echo "Flatpak Package list file not found: $flatpak_file"
         fi
 }
-
 
 install_from_list() {
 	local list_file="$1"
