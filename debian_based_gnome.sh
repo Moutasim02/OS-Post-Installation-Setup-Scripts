@@ -36,8 +36,12 @@ install_from_list() {
 	fi
 }
 
+
 install_gnome_extensions() {
     local extensions_file="$1"
+
+    export DBUS_SESSION_BUS_ADDRESS=$(dbus-daemon --session --fork --print-address)
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
     if [[ ! -f "$extensions_file" ]]; then
         echo "Error: Extensions file not found."
@@ -224,7 +228,7 @@ grant_execution_permission() {
 install_virtualbox() {
 	echo "Installing Virtual Box"
 	wget -c https://download.virtualbox.org/virtualbox/7.0.12/virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
-	sudo apt install virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
+	sudo apt install ./virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 }
 
 add_ssh_key() {
