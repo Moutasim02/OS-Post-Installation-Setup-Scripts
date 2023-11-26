@@ -38,17 +38,20 @@ install_from_list() {
 }
 
 install_gnome_extensions() {
-    local extensions_file="$1"
-    if [ -f "$extensions_file" ]; then
-        echo "Installing GNOME Shell extensions from $extensions_file..."
-        while IFS= read -r extension_id; do
-            gnome-extensions install "$extension_id"
-        done < "$extensions_file"
-    else
-        echo "Extensions list file not found: $extensions_file"
-    fi
-}
+    local extensions=(
+        "Always-Show-Titles-In-Overview@gmail.com"
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "blur-my-shell@aunetx"
+        "gsconnect@andyholmes.github.io"
+        "dash-to-dock@micxgx.gmail.com"
+        "user-theme@gnome-shell-extensions.gcampax.github.com"
+    )
 
+    echo "Installing GNOME Shell extensions..."
+    for extension_id in "${extensions[@]}"; do
+        gnome-extensions install "$extension_id"
+    done
+}
 
 export_installed_extensions() {
     echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
