@@ -220,9 +220,14 @@ install_virtualbox() {
 	sudo apt install virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 }
 
+add_ssh_key() {
+	ssh-add ~/.ssh/id_ed25519
+}
+
 main() {
 	grant_execution_permission
 	bash mount_directories.sh
+	add_ssh_key
 	install_packages
 	enable_flathub
 	install_flatpak_packages
