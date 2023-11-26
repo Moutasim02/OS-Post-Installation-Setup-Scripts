@@ -138,19 +138,6 @@ EOL
     echo "Desktop file created for $name at $desktop_file"
 }
 
-create_pwas() {
-    echo "Creating PWAs for specified websites"
-    create_a_pwa "X" "https://x.com"
-    create_a_pwa "Teams" "https://teams.microsoft.com"
-    create_a_pwa "Tldraw" "https://www.tldraw.com"
-    create_a_pwa "Whatsapp Web" "https://web.whatsapp.com"
-    create_a_pwa "Notion" "https://www.notion.so"
-    create_a_pwa "Outlook" "https://outlook.office.com/mail"
-    create_a_pwa "ChatGPT" "https://chat.openai.com"
-    create_a_pwa "Bard" "https://bard.google.com/chat"
-    create_a_pwa "Figma" "https://www.figma.com"
-}
-
 enable_flathub() {
     echo "Installing flathub"
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -175,7 +162,6 @@ main() {
     install_brave
     install_mern
     install_docker
-    create_pwas
     echo "Post-installation script completed."
 }
 
