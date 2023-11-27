@@ -5,3 +5,4 @@ https://extensions.gnome.org/extension/3193/blur-my-shell/
 https://extensions.gnome.org/extension/1319/gsconnect/
 https://extensions.gnome.org/extension/307/dash-to-dock/
 https://extensions.gnome.org/extension/19/user-themes/
+https://extensions.gnome.org/extension/2645/brightness-control-using-ddcutil/
