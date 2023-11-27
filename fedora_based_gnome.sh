@@ -177,9 +177,18 @@ add_ssh_key() {
 	ssh-add ~/.ssh/id_ed25519
 }
 
+mount_process() {
+	bash mount_directories.sh
+	sudo cp mount_directories.sh /usr/local/bin/
+	sudo chmod +x /usr/local/bin/mount_directories.sh
+	sudo cp bind-mounts.service /etc/systemd/system/bind-mounts.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable bind-mounts.service
+}
+
 main() {
     grant_execution_permission
-    bash mount_directories.sh
+    mount_process
     add_ssh_key
     install_packages
     enable_flathub

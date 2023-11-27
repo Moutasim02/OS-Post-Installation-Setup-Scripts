@@ -104,23 +104,6 @@ install_nvm() {
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 }
 
-# install_mern() {
-# 	install_nvm
-# 	echo "To install node run: nvm install 20.8.0"
-
-# 	echo "Installing MongoDB..."
-# 	curl -fsSL https://pgp.mongodb.com/server-7.0.asc |
-# 		sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-# 			--dearmor
-# 	echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-# 	sudo apt-get update
-# 	sudo apt-get install -y mongodb-org mongodb-org-database mongodb-org-tools mongodb-org-tools
-# 	echo "Start mongod"
-# 	sudo systemctl start mongod
-# 	echo "MongoDB Status:"
-# 	sudo systemctl status mongod
-# }
-
 install_docker() {
 	echo "Adding Docker's official GPG key"
 	sudo apt-get update -y
@@ -226,10 +209,11 @@ main() {
 	enable_flathub
 	install_flatpak_packages
 	configure_system
+	# Specific installations
 	install_virtualbox
 	install_brave
-	# install_mern
 	install_docker
+	install_nvm
 	install_jetbrains_toolbox
 	install_vscode
 	echo "Post-installation script completed."
