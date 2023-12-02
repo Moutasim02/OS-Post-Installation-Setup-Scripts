@@ -14,6 +14,7 @@ fi
 
 sudo mount -a
 
+sudo mount --bind "$MOUNT_SOURCE/Desktop" "$MOUNT_DEST/Desktop"
 sudo mount --bind "$MOUNT_SOURCE/Development" "$MOUNT_DEST/Development"
 sudo mount --bind "$MOUNT_SOURCE/Documents" "$MOUNT_DEST/Documents"
 sudo mount --bind "$MOUNT_SOURCE/Downloads" "$MOUNT_DEST/Downloads"

@@ -1,62 +1,10 @@
 #!/bin/bash
 
 PACKAGE_LIST="package_lists/fedora_packages_list.txt"
-FLATPAK_PACKAGE_LIST="package_lists/flatpak_list.txt"
-EXTENSIONS_LIST_FILE="extension_lists/extensions_list.txt"
-INSTALLED_EXTENSIONS_FILE="installed_extensions.txt"
 
 install_packages() {
     echo "Installing dnf packages..."
     sudo dnf install -y $(<"$PACKAGE_LIST")
-}
-
-install_flatpak_packages() {
-    echo "Installing flatpak packages..."
-    install_flatpak_from_list "$FLATPAK_PACKAGE_LIST"
-}
-
-install_flatpak_from_list() {
-    local flatpak_file="$1"
-    if [ -f "$flatpak_file" ]; then
-        flatpak install --noninteractive flathub $(<"$flatpak_file")
-    else
-        echo "Flatpak Package list file not found: $flatpak_file"
-    fi
-}
-
-install_gnome_extensions() {
-    if [ ! -f "$1" ]; then
-        echo "Error: Extensions list file not found: $1"
-        exit 1
-    fi
-
-    while IFS= read -r URL; do
-        EXTENSION_ID=$(curl -s "$URL" | grep -oP 'data-uuid="\K[^"]+')
-        VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=$EXTENSION_ID" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
-        wget -O "${EXTENSION_ID}.zip" "https://extensions.gnome.org/download-extension/${EXTENSION_ID}.shell-extension.zip?version_tag=$VERSION_TAG"
-        gnome-extensions install --force "${EXTENSION_ID}.zip"
-        if ! gnome-extensions list | grep --quiet "${EXTENSION_ID}"; then
-            busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${EXTENSION_ID}"
-        fi
-        gnome-extensions enable "${EXTENSION_ID}"
-        rm "${EXTENSION_ID}.zip"
-    done <"$1"
-}
-
-export_installed_extensions() {
-    echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
-    gnome-extensions list >"$INSTALLED_EXTENSIONS_FILE"
-}
-
-enable_installed_extensions() {
-    echo "Enabling installed GNOME Shell extensions..."
-    gnome-extensions enable $(awk '{print $1}' "$INSTALLED_EXTENSIONS_FILE")
-}
-
-configure_gnome() {
-    install_gnome_extensions "$EXTENSIONS_LIST_FILE"
-    export_installed_extensions
-    enable_installed_extensions
 }
 
 install_bash_theme() {
@@ -76,37 +24,6 @@ install_bash_theme() {
     cd ..
 }
 
-config_workspaces() {
-    echo "Enable workspaces for all monitors"
-    gsettings set org.gnome.mutter workspaces-only-on-primary false
-    echo "Enable Isolation of apps"
-    gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-}
-
-config_power_management() {
-    echo "Stop Automatic Suspend"
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
-
-    echo "Stop Screen Dimming"
-    gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
-
-    echo "Prevent Screen from Blanking"
-    gsettings set org.gnome.desktop.session idle-delay 0
-}
-
-add_arabic_layout() {
-    echo "Adding Arabic layout"
-    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara')]"
-    echo "Arabic keyboard layout added."
-}
-
-configure_system() {
-    configure_gnome
-    config_workspaces
-    config_power_management
-    add_arabic_layout
-}
 
 install_nvm() {
     echo "Installing NVM..."
@@ -139,21 +56,15 @@ install_brave() {
     sudo dnf install -y brave-browser
 }
 
-create_a_pwa() {
-    local name="$1"
-    local url="$2"
-    local desktop_file="$HOME/Desktop/$name.desktop"
+install_jetbrains_toolbox() {
+	wget -c https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.1.1.18388.tar.gz
+	sudo tar -xzf jetbrains-toolbox-2.1.1.18388.tar.gz -C ~/Downloads
+}
 
-    cat <<EOL >"$desktop_file"
-[Desktop Entry]
-Name=$name
-Exec=xdg-open $url
-Type=Application
-Icon=web-browser
-EOL
-
-    chmod +x "$desktop_file"
-    echo "Desktop file created for $name at $desktop_file"
+install_virtualbox() {
+	echo "Installing Virtual Box"
+	wget -c https://download.virtualbox.org/virtualbox/7.0.12/virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
+	sudo apt install ./virtualbox-7.0_7.0.12-159484~Debian~bookworm_amd64.deb
 }
 
 enable_flathub() {
@@ -192,11 +103,13 @@ main() {
     add_ssh_key
     install_packages
     enable_flathub
-    install_flatpak_packages
-    configure_system
+    # Specific installations
+    install_bash_theme
     install_brave
-    install_mern
     install_docker
+    install_mern
+    install_virtualbox
+    install_jetbrains_toolbox
     install_vscode
     echo "Post-installation script completed."
 }

@@ -1,9 +1,6 @@
 #!/bin/bash
 
 PACKAGE_LIST="package_lists/debian_packages_list.txt"
-FLATPAK_PACKAGE_LIST="package_lists/flatpak_list.txt"
-EXTENSIONS_LIST_FILE="extension_lists/extensions_list.txt"
-INSTALLED_EXTENSIONS_FILE="installed_extensions.txt"
 
 install_packages() {
 	echo "Updating package list..."
@@ -13,20 +10,6 @@ install_packages() {
 	install_from_list "$PACKAGE_LIST"
 }
 
-install_flatpak_packages() {
-	echo "Installing flatpak packages..."
-	install_flatpak_from_list "$FLATPAK_PACKAGE_LIST"
-}
-
-install_flatpak_from_list() {
-	local flatpak_file="$1"
-	if [ -f "$flatpak_file" ]; then
-		flatpak install flathub --noninteractive $(<"$flatpak_file")
-	else
-		echo "Flatpak Package list file not found: $flatpak_file"
-	fi
-}
-
 install_from_list() {
 	local list_file="$1"
 	if [ -f "$list_file" ]; then
@@ -34,35 +17,6 @@ install_from_list() {
 	else
 		echo "APT Package list file not found: $list_file"
 	fi
-}
-
-install_gnome_extensions() {
-	if [ ! -f "$1" ]; then
-		echo "Error: Extensions list file not found: $1"
-		exit 1
-	fi
-
-	while IFS= read -r URL; do
-		EXTENSION_ID=$(curl -s "$URL" | grep -oP 'data-uuid="\K[^"]+')
-		VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=$EXTENSION_ID" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
-		wget -O "${EXTENSION_ID}.zip" "https://extensions.gnome.org/download-extension/${EXTENSION_ID}.shell-extension.zip?version_tag=$VERSION_TAG"
-		gnome-extensions install --force "${EXTENSION_ID}.zip"
-		if ! gnome-extensions list | grep --quiet "${EXTENSION_ID}"; then
-			busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${EXTENSION_ID}"
-		fi
-		gnome-extensions enable "${EXTENSION_ID}"
-		rm "${EXTENSION_ID}.zip"
-	done <"$1"
-}
-
-export_installed_extensions() {
-	echo "Exporting installed extensions to $INSTALLED_EXTENSIONS_FILE..."
-	gnome-extensions list >installed_extensions.txt
-}
-
-enable_installed_extensions() {
-	echo "Enabling installed GNOME Shell extensions..."
-	gnome-extensions enable $(awk '{print $1}' "$INSTALLED_EXTENSIONS_FILE")
 }
 
 install_bash_theme() {
@@ -80,21 +34,6 @@ install_bash_theme() {
 
 	echo "Going back to previous directory"
 	cd ..
-}
-
-config_workspaces() {
-	echo "Enable workspaces for all monitors"
-	gsettings set org.gnome.mutter workspaces-only-on-primary false
-	echo "Enable Isolation of apps"
-	gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-}
-
-configure_gnome() {
-	install_gnome_extensions "$EXTENSIONS_LIST_FILE"
-	export_installed_extensions
-	enable_installed_extensions
-	install_bash_theme
-	config_workspaces
 }
 
 install_nvm() {
@@ -129,31 +68,6 @@ install_brave() {
 	echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 	sudo apt update -y
 	sudo apt install -y brave-browser
-}
-
-config_power_management() {
-	echo "Stop Automatic Suspend"
-	gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-	gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
-
-	echo "Stop Screen Dimming"
-	gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
-
-	echo "Prevent Screen from Blanking"
-	gsettings set org.gnome.desktop.session idle-delay 0
-}
-
-add_arabic_layout() {
-	echo "Adding arabic layout"
-	gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara')]"
-	echo "Arabic keyboard layout added."
-}
-
-configure_system() {
-	echo "Configuring system..."
-	configure_gnome
-	config_power_management
-	add_arabic_layout
 }
 
 install_jetbrains_toolbox() {
@@ -207,13 +121,12 @@ main() {
 	add_ssh_key
 	install_packages
 	enable_flathub
-	install_flatpak_packages
-	configure_system
 	# Specific installations
-	install_virtualbox
+	install_bash_theme
 	install_brave
 	install_docker
 	install_nvm
+	install_virtualbox
 	install_jetbrains_toolbox
 	install_vscode
 	echo "Post-installation script completed."

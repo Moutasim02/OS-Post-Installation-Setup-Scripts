@@ -11,6 +11,3 @@ git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git
 cd WhiteSur-icon-theme
 ./install.sh
 
-# Apply theme and icons
-gsettings set org.gnome.desktop.interface gtk-theme "WhiteSur-Dark"
-gsettings set org.gnome.desktop.interface icon-theme "WhiteSur"
