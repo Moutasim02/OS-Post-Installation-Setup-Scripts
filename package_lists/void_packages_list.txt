@@ -1,0 +1,13 @@
+git
+vim
+wget
+curl
+gnupg
+gpgme
+libfuse2
+flatpak
+gnome-tweaks
+htop
+timeshift
+xsel
+

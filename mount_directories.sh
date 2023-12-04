@@ -20,6 +20,6 @@ sudo mount --bind "$MOUNT_SOURCE/Documents" "$MOUNT_DEST/Documents"
 sudo mount --bind "$MOUNT_SOURCE/Downloads" "$MOUNT_DEST/Downloads"
 sudo mount --bind "$MOUNT_SOURCE/Pictures" "$MOUNT_DEST/Pictures"
 sudo mount --bind "$MOUNT_SOURCE/VMs" "$MOUNT_DEST/VMs"
-sudo mount --bind "$MOUNT_SOURCE/.ssh" "$MOUNT_DEST/.ssh"
+sudo mount --bind "$MOUNT_SOURCE/ssh" "$MOUNT_DEST/.ssh"
 
 echo "Partition mounting script completed."
