@@ -65,8 +65,12 @@ grant_execution_permission() {
 }
 
 install_kvm() {
-	echo "Installing VirtualBox is not straightforward on Void Linux."
-	echo "Consider building from source or checking for alternative methods."
+	sudo xbps-install -S dbus qemu libvirtd virt-manager bridge-utils iptables2
+	# link services
+	ln -s /etc/sv/dbus /var/service
+	ln -s /etc/sv/libvirtd /var/service
+	ln -s /etc/sv/virtlockd /var/service
+	ln -s /etc/sv/virtlogd /var/service
 }
 
 add_ssh_key() {
