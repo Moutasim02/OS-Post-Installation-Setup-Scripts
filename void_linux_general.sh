@@ -46,7 +46,6 @@ install_nvm() {
 install_docker() {
 	echo "Installing Docker..."
 	sudo xbps-install -S docker docker-cli
-
 }
 
 install_jetbrains_toolbox() {
@@ -65,12 +64,12 @@ grant_execution_permission() {
 }
 
 install_kvm() {
-	sudo xbps-install -S dbus qemu libvirtd virt-manager bridge-utils iptables2
+	sudo xbps-install -S dbus qemu libvirtd virt-manager bridge-utils iptables2 polkit
 	# link services
-	ln -s /etc/sv/dbus /var/service
-	ln -s /etc/sv/libvirtd /var/service
-	ln -s /etc/sv/virtlockd /var/service
-	ln -s /etc/sv/virtlogd /var/service
+	sudo ln -s /etc/sv/polkitd /var/service
+	sudo ln -s /etc/sv/libvirtd /var/service
+	sudo ln -s /etc/sv/virtlockd /var/service
+	sudo ln -s /etc/sv/virtlogd /var/service
 }
 
 add_ssh_key() {
@@ -85,7 +84,7 @@ mount_process() {
 	bash mount_directories.sh
 	sudo cp mount_directories.sh /usr/local/bin/
 	sudo chmod +x /usr/local/bin/mount_directories.sh
-	sudo cp bind-mounts.service /etc/sv/bind-mounts/run
+	sudo cp void_bind /etc/sv/bind-mounts/run
 	sudo ln -s /etc/sv/bind-mounts /var/service/
 	sudo sv start bind-mounts
 }

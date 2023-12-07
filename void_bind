@@ -1,0 +1,4 @@
+#!/bin/sh
+# /etc/sv/bind-mounts/run
+
+/usr/local/bin/mount_directories.sh
