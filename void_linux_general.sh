@@ -84,9 +84,12 @@ mount_process() {
 	bash mount_directories.sh
 	sudo cp mount_directories.sh /usr/local/bin/
 	sudo chmod +x /usr/local/bin/mount_directories.sh
-	sudo cp void_bind /etc/sv/bind-mounts/run
-	sudo ln -s /etc/sv/bind-mounts /var/service/
+	sudo mkdir -p /etc/sv/bind-mounts
+	sudo cp run /etc/sv/bind-mounts/
+	sudo chmod +x /etc/sv/bind-mounts/run
+	sudo ln -s /etc/sv/bind-mounts /var/service
 	sudo sv start bind-mounts
+	sudo sv status bind-mounts
 }
 
 main() {
