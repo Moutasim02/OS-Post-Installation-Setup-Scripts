@@ -12,3 +12,11 @@ wps-office
 virtualbox
 timeshift
 xsel
+qemu
+virt-manager
+libvirt
+ebtables
+dnsmasq
+openbsd-netcat
+bridge-utils
+edk2-ovmf
